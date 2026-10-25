@@ -3,6 +3,7 @@ import argparse
 import sys
 import os
 from maven_fetcher import get_direct_dependencies
+from graph_builder import build_dependency_graph
 
 
 def parse_arguments():
@@ -39,9 +40,10 @@ def parse_arguments():
 
 def validate_args(args):
     """Проверяет корректность переданных параметров."""
-    if not args.package or ":" not in args.package:
-        print("Ошибка: Пакет должен быть в формате 'groupId:artifactId'")
-        sys.exit(1)
+    if not args.test_mode:
+        if not args.package or ":" not in args.package:
+            print("Ошибка: Пакет должен быть в формате 'groupId:artifactId'")
+            sys.exit(1)
 
     if not args.test_mode and not args.url.startswith("http"):
         print("Ошибка: URL должен начинаться с http в обычном режиме")
@@ -85,6 +87,13 @@ def main():
         print(f"\nНайдено {len(deps)} прямых зависимостей:")
         for d in deps:
             print(f" - {d}")
+
+    graph, start = build_dependency_graph(
+        args.url, args.test_mode, args.depth, args.filter
+    )
+    print(f"\nПостроенный граф (Старт: {start}):")
+    for k, v in graph.items():
+        print(f"{k} -> {v}")
 
 
 if __name__ == "__main__":
