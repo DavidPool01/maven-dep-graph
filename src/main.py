@@ -2,6 +2,7 @@
 import argparse
 import sys
 import os
+from maven_fetcher import get_direct_dependencies
 
 
 def parse_arguments():
@@ -54,6 +55,10 @@ def validate_args(args):
         print("Ошибка: Глубина должна быть больше 0")
         sys.exit(1)
 
+    if not args.version or not args.version.strip():
+        print("Ошибка: Версия пакета не может быть пустой")
+        sys.exit(1)
+
 
 def print_config(args):
     """Выводит все настраиваемые параметры в формате ключ-значение."""
@@ -72,6 +77,14 @@ def main():
     args = parse_arguments()
     validate_args(args)
     print_config(args)
+
+    if not args.test_mode:
+        deps = get_direct_dependencies(
+            args.url, args.package, args.version
+        )
+        print(f"\nНайдено {len(deps)} прямых зависимостей:")
+        for d in deps:
+            print(f" - {d}")
 
 
 if __name__ == "__main__":

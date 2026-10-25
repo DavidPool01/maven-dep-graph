@@ -5,5 +5,7 @@ __pycache__/
 .Python
 env/
 venv/
+.idea/
+.vscode/
 *.png
-*.svg.idea/ 
+*.svg
