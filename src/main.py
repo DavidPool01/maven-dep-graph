@@ -4,6 +4,7 @@ import sys
 import os
 from maven_fetcher import get_direct_dependencies
 from graph_builder import build_dependency_graph
+from graph_builder import get_install_order
 
 
 def parse_arguments():
@@ -94,6 +95,11 @@ def main():
     print(f"\nПостроенный граф (Старт: {start}):")
     for k, v in graph.items():
         print(f"{k} -> {v}")
+
+    install_order = get_install_order(graph, start)
+    print("\nПорядок установки зависимостей:")
+    for i, pkg in enumerate(install_order, 1):
+        print(f"{i}. {pkg}")
 
 
 if __name__ == "__main__":

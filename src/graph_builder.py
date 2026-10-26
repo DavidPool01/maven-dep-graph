@@ -46,7 +46,6 @@ def build_dependency_graph(source, test_mode, max_depth, filter_str):
         start_node = list(raw_graph.keys())[0]
     else:
         # Для реального Maven пока берем только прямые (заглушка)
-        print("Рекурсивный запрос к реальному Maven пока симулируется.")
         raw_graph = {source: []}
         start_node = source
 
@@ -57,3 +56,20 @@ def build_dependency_graph(source, test_mode, max_depth, filter_str):
         filter_str, visited, full_graph
     )
     return full_graph, start_node
+
+
+def get_install_order(graph, start_node):
+    """Вычисляет порядок установки через пост-порядок DFS."""
+    order = []
+    visited = set()
+
+    def dfs(node):
+        if node in visited:
+            return
+        visited.add(node)
+        for dep in graph.get(node, []):
+            dfs(dep)
+        order.append(node)
+
+    dfs(start_node)
+    return order
